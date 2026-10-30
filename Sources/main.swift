@@ -64,10 +64,10 @@ private func applicationToQuit(at point: CGPoint) -> pid_t? {
     return nil
 }
 
-private func sendQuitCommand(to pid: pid_t) {
+private func sendCommand(_ keyCode: CGKeyCode, to pid: pid_t) {
     let source = CGEventSource(stateID: .hidSystemState)
-    guard let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 12, keyDown: true),
-          let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 12, keyDown: false) else { return }
+    guard let keyDown = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: true),
+          let keyUp = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: false) else { return }
 
     keyDown.flags = .maskCommand
     keyUp.flags = .maskCommand
@@ -94,7 +94,8 @@ private let eventCallback: CGEventTapCallBack = { _, type, event, userInfo in
         return Unmanaged.passUnretained(event)
     }
 
-    sendQuitCommand(to: pid)
+    let isFinder = NSRunningApplication(processIdentifier: pid)?.bundleIdentifier == "com.apple.finder"
+    sendCommand(isFinder ? 13 : 12, to: pid) // Finder: ⌘W; other apps: ⌘Q.
     return nil
 }
 

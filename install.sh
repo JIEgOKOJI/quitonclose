@@ -27,7 +27,7 @@ cat > "$PLIST" <<PLIST_EOF
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
-    <false/>
+    <true/>
     <key>ProcessType</key>
     <string>Interactive</string>
 </dict>
